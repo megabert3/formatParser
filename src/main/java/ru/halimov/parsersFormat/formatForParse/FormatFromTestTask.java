@@ -6,8 +6,43 @@ public class FormatFromTestTask implements ParsingFormat {
     private int amount;
     private String comment = "";
     private String fileName = "";
-    private int line;
+    private String line;
     private String result;
+
+    @Override
+    public void setParamsForParsing(String params) {
+        //1,100,USD,оплата заказа,имя файла,номер линии
+        String[] splitParams = params.split(",");
+
+        //Если данных недостаточно
+        if (splitParams.length < 6) {
+            setErrorResult(splitParams[splitParams.length - 2],splitParams[splitParams.length - 1],
+                    "ERROR: Недостаточно данных для парсинга");
+            return;
+        }
+
+        try {
+            id = Integer.parseInt(splitParams[0]);
+            amount = Integer.parseInt(splitParams[1]);
+            comment = splitParams[3].trim();
+            fileName = splitParams[4];
+            line = splitParams[5];
+            result = "OK";
+
+        }catch (NumberFormatException e) {
+            setErrorResult(splitParams[splitParams.length - 2],splitParams[splitParams.length - 1],
+                    "ERROR: Неверный формат строки");
+        }
+    }
+
+    private void setErrorResult(String line, String fileName, String errorMess) {
+        id = 0;
+        amount = 0;
+        comment = "";
+        this.fileName = fileName;
+        this.line = line;
+        result = errorMess;
+    }
 
     @Override
     public String getParseLine() {
@@ -52,11 +87,11 @@ public class FormatFromTestTask implements ParsingFormat {
         this.fileName = fileName;
     }
 
-    public int getLine() {
+    public String getLine() {
         return line;
     }
 
-    public void setLine(int line) {
+    public void setLine(String line) {
         this.line = line;
     }
 

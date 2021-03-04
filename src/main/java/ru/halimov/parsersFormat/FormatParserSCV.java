@@ -1,44 +1,69 @@
 package ru.halimov.parsersFormat;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.halimov.parsersFormat.formatForParse.FormatFromTestTask;
-import ru.halimov.parsersFormat.formatForParse.ParsingFormat;
+import ru.halimov.formatForParse.FormatFromTestTask;
+
 
 import java.io.*;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class FormatParserSCV implements FormatParser {
 
     private String pathToSCVFile;
     private String fileName;
-    private ParsingFormat parsingFormat;
 
-    public FormatParserSCV(String pathToSCVFile) {
-        this.pathToSCVFile = pathToSCVFile;
-        this.fileName = new File(pathToSCVFile).getName();
-    }
+    @Autowired
+    private FormatFromTestTask formatFromTestTask;
 
     @Override
-    public void parse(ParsingFormat parsingFormat) {
+    public void parse() {
 
         try (BufferedReader fileStream = new BufferedReader(new InputStreamReader(new FileInputStream(pathToSCVFile)))) {
 
             int lineCounter = 0;
             String line;
             String[] splitLine;
-            List<String> paramList = new ArrayList<>();
 
             while ((line = fileStream.readLine()) != null) {
                 lineCounter++;
-                parsingFormat.setParamsForParsing(line + "," + fileName + "," + lineCounter);
-                System.out.println(parsingFormat.getParseLine());
+
+                //1,100,USD,оплата заказа
+                splitLine = line.split(",");
+
+                if (splitLine.length < 4) {
+                    formatFromTestTask.setErrorResult(lineCounter, fileName,
+                            "ERROR: недостаточно данных для парсинга");
+
+                } else if (splitLine.length > 4) {
+                    formatFromTestTask.setErrorResult(lineCounter, fileName,
+                            "ERROR: находится больше данных чем необходимо");
+
+                } else {
+                    try {
+                        formatFromTestTask.setId(Integer.parseInt(splitLine[0]));
+                        formatFromTestTask.setAmount(Integer.parseInt(splitLine[1]));
+                        formatFromTestTask.setComment(splitLine[3].trim());
+                        formatFromTestTask.setFileName(fileName);
+                        formatFromTestTask.setLine(lineCounter);
+                        formatFromTestTask.setResult("OK");
+
+                    }catch (NumberFormatException e) {
+                        formatFromTestTask.setErrorResult(lineCounter, fileName,
+                                "ERROR: не удалось привести значение к необходимому типу данных");
+                    }
+                }
+
+                System.out.println(formatFromTestTask.getParseLine());
             }
 
         } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
+    }
 
+    public void setPathToSCVFile(String pathToSCVFile) {
+        this.pathToSCVFile = pathToSCVFile;
+        this.fileName = new File(pathToSCVFile).getName();
     }
 }

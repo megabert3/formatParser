@@ -6,6 +6,9 @@ import ru.halimov.parser.formatForParse.FormatFromTestTask;
 
 import java.io.*;
 
+/**
+ * Данный класс отвечает за парсинг данных из файлов с расширением JSON
+ */
 @Component
 public class FormatParserJSON implements FormatParser {
 

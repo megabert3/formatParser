@@ -2,6 +2,9 @@ package ru.halimov.parser.formatForParse;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Данный класс отвечает за конкретный формат записи, которую необходимо возвращать
+ */
 @Component
 public class FormatFromTestTask implements ParsingFormat {
 
@@ -23,6 +26,12 @@ public class FormatFromTestTask implements ParsingFormat {
                 "\"result\":" + "\"" + result + "\"";
     }
 
+    /**
+     * В случае возникновения ошибки парсинга
+     * @param line - номер линии
+     * @param fileName - название файла
+     * @param errorMess - сообщение об ошибке
+     */
     public void setErrorResult(int line, String fileName, String errorMess) {
         id = 0;
         amount = 0;

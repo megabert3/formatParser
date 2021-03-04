@@ -7,6 +7,10 @@ import ru.halimov.parser.parsersFormat.FormatParserSCV;
 
 import java.io.File;
 
+/**
+ * Данный класс является менеджером по парсингу файлов. В зависимости от расширения полученного на вход файла
+ * делегирует работу необходимому объекту
+ */
 @Component
 public class ParserInJSONFileManager {
 

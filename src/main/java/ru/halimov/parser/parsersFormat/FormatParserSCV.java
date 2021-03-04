@@ -7,6 +7,9 @@ import ru.halimov.parser.formatForParse.FormatFromTestTask;
 
 import java.io.*;
 
+/**
+ * Данный класс отвечает за парсинг данных из файлов с расширением SCV
+ */
 @Component
 public class FormatParserSCV implements FormatParser {
 

@@ -1,4 +1,4 @@
-package ru.halimov.parsersFormat;
+package ru.halimov.parser.parsersFormat;
 
 public interface FormatParser {
     void parse();

@@ -1,4 +1,4 @@
-package ru.halimov.formatForParse;
+package ru.halimov.parser.formatForParse;
 
 import org.springframework.stereotype.Component;
 

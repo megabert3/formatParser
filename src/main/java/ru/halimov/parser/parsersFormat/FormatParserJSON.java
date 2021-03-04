@@ -1,8 +1,8 @@
-package ru.halimov.parsersFormat;
+package ru.halimov.parser.parsersFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.halimov.formatForParse.FormatFromTestTask;
+import ru.halimov.parser.formatForParse.FormatFromTestTask;
 
 import java.io.*;
 

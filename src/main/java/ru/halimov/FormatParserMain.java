@@ -1,8 +1,7 @@
 package ru.halimov;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ru.halimov.parsersFormat.FormatParserJSON;
-import ru.halimov.parsersFormat.FormatParserSCV;
+import ru.halimov.parser.ParserInJSONFileManager;
 import ru.halimov.springConfig.FormatParserAppConfig;
 
 public class FormatParserMain {
@@ -11,13 +10,12 @@ public class FormatParserMain {
         AnnotationConfigApplicationContext annotationConfigApplicationContext =
                 new AnnotationConfigApplicationContext(FormatParserAppConfig.class);
 
-        FormatParserSCV formatParserSCV = annotationConfigApplicationContext.getBean(FormatParserSCV.class);
-        formatParserSCV.setPathToSCVFile("C:\\Users\\bert1\\Desktop\\test\\csvFile.csv");
-        formatParserSCV.parse();
+        ParserInJSONFileManager parserInJSONFileManager =
+                annotationConfigApplicationContext.getBean(ParserInJSONFileManager.class);
 
-        FormatParserJSON formatParserJSON = annotationConfigApplicationContext.getBean(FormatParserJSON.class);
-        formatParserJSON.setPathToJSONFile("C:\\Users\\bert1\\Desktop\\test\\jsonFile.json");
-        formatParserJSON.parse();
+        for (String pathToFile : args) {
+            parserInJSONFileManager.parse(pathToFile);
+        }
 
         annotationConfigApplicationContext.close();
     }

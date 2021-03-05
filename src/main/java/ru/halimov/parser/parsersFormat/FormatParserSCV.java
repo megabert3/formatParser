@@ -13,26 +13,25 @@ import java.io.*;
 @Component
 public class FormatParserSCV implements FormatParser {
 
-    private String pathToSCVFile;
-    private String fileName;
-
-    @Autowired
     private FormatFromTestTask formatFromTestTask;
 
     @Override
-    public void parse() {
+    public void parse(File path) {
 
-        try (BufferedReader fileStream = new BufferedReader(new InputStreamReader(new FileInputStream(pathToSCVFile)))) {
+        String fileName = path.getName();
+
+        try (BufferedReader fileStream = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(path)))) {
 
             int lineCounter = 0;
             String line;
-            String[] splitLine;
 
             while ((line = fileStream.readLine()) != null) {
                 lineCounter++;
 
                 //1,100,USD,оплата заказа
-                splitLine = line.split(",");
+                String[] splitLine = line.split(",");
 
                 if (splitLine.length < 4) {
                     formatFromTestTask.setErrorResult(lineCounter, fileName,
@@ -65,8 +64,8 @@ public class FormatParserSCV implements FormatParser {
         }
     }
 
-    public void setPathToSCVFile(String pathToSCVFile) {
-        this.pathToSCVFile = pathToSCVFile;
-        this.fileName = new File(pathToSCVFile).getName();
+    @Autowired
+    public void setFormatFromTestTask(FormatFromTestTask formatFromTestTask) {
+        this.formatFromTestTask = formatFromTestTask;
     }
 }

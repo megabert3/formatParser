@@ -12,24 +12,25 @@ import java.io.*;
 @Component
 public class FormatParserJSON implements FormatParser {
 
-    @Autowired
     private FormatFromTestTask formatFromTestTask;
-    private String pathToJSONFile;
-    private String fileName;
 
     @Override
-    public void parse() {
-        try (BufferedReader fileStream = new BufferedReader(new InputStreamReader(new FileInputStream(pathToJSONFile)))) {
+    public void parse(File path) {
+
+        String fileName = path.getName();
+
+        try (BufferedReader fileStream = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(path)))) {
 
             int lineCounter = 0;
             String line;
-            String[] splitLine;
 
             while ((line = fileStream.readLine()) != null) {
                 lineCounter++;
 
                 //{“orderId”:2,”amount”:1.23,”currency”:”USD”,”comment”:”оплата заказа”}
-                splitLine = line.split(",");
+                String[] splitLine = line.split(",");
 
                 if (splitLine.length < 4) {
                     formatFromTestTask.setErrorResult(lineCounter, fileName,
@@ -65,8 +66,8 @@ public class FormatParserJSON implements FormatParser {
         }
     }
 
-    public void setPathToJSONFile(String pathToJSONFile) {
-        this.pathToJSONFile = pathToJSONFile;
-        this.fileName = new File(pathToJSONFile).getName();
+    @Autowired
+    public void setFormatFromTestTask(FormatFromTestTask formatFromTestTask) {
+        this.formatFromTestTask = formatFromTestTask;
     }
 }

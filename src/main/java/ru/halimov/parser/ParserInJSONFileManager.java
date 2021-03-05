@@ -6,6 +6,7 @@ import ru.halimov.parser.parsersFormat.FormatParserJSON;
 import ru.halimov.parser.parsersFormat.FormatParserSCV;
 
 import java.io.File;
+import java.util.Locale;
 
 /**
  * Данный класс является менеджером по парсингу файлов. В зависимости от расширения полученного на вход файла
@@ -14,9 +15,7 @@ import java.io.File;
 @Component
 public class ParserInJSONFileManager {
 
-    @Autowired
     private FormatParserJSON formatParserJSON;
-    @Autowired
     private FormatParserSCV formatParserSCV;
 
     public void parse(String pathToFile) {
@@ -27,20 +26,19 @@ public class ParserInJSONFileManager {
             return;
         }
 
-        switch (getExtension(pathToFile)) {
+        String extension = getExtension(pathToFile).toLowerCase(Locale.ROOT);
+
+        switch (extension) {
             case "csv" :
-                formatParserSCV.setPathToSCVFile(pathToFile);
-                formatParserSCV.parse();
+                formatParserSCV.parse(file);
                 break;
 
             case "json" :
-                formatParserJSON.setPathToJSONFile(pathToFile);
-                formatParserJSON.parse();
+                formatParserJSON.parse(file);
                 break;
 
             default:
                 System.out.println("Формат файла не поддерживается");
-
         }
     }
 
@@ -53,5 +51,15 @@ public class ParserInJSONFileManager {
         String localPath = path.trim();
         int i = localPath.lastIndexOf(".");
         return localPath.substring(i + 1);
+    }
+
+    @Autowired
+    public void setFormatParserJSON(FormatParserJSON formatParserJSON) {
+        this.formatParserJSON = formatParserJSON;
+    }
+
+    @Autowired
+    public void setFormatParserSCV(FormatParserSCV formatParserSCV) {
+        this.formatParserSCV = formatParserSCV;
     }
 }

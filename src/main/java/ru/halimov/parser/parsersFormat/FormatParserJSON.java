@@ -1,10 +1,17 @@
 package ru.halimov.parser.parsersFormat;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.halimov.parser.formatForParse.FormatFromTestTask;
+import ru.halimov.parser.ParserInJSONFileManager;
+import ru.halimov.parser.formatForParse.InputFormatFromTestTask;
+import ru.halimov.parser.formatForParse.OutputJSONFormatFromTestTask;
 
 import java.io.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Данный класс отвечает за парсинг данных из файлов с расширением JSON
@@ -12,62 +19,148 @@ import java.io.*;
 @Component
 public class FormatParserJSON implements FormatParser {
 
-    private FormatFromTestTask formatFromTestTask;
+    private ParserInJSONFileManager parserInJSONFileManager;
+
+    private String fileName;
+
+    //Файл прочитан?
+    private boolean fileEnd = false;
+
+    private Thread outputJSONThread;
+
+    //Очередь с объектами подготовленными для парсинга и вывода в концоль
+    private final BlockingQueue<OutputJSONFormatFromTestTask> inputJSONFormatFilesQueue
+            = new LinkedBlockingQueue<>();
+
+    @Autowired
+    public FormatParserJSON(ParserInJSONFileManager parserInJSONFileManager) {
+        this.parserInJSONFileManager = parserInJSONFileManager;
+    }
 
     @Override
     public void parse(File path) {
+        fileName = path.getName();
+        fileEnd = false;
 
-        String fileName = path.getName();
+        Thread inputJSONThread = new Thread(new InputJSONParserThread(path));
+        inputJSONThread.start();
 
-        try (BufferedReader fileStream = new BufferedReader(
-                new InputStreamReader(
-                        new FileInputStream(path)))) {
+        outputJSONThread = new Thread(new OutputJSONParserThread());
+        outputJSONThread.start();
+    }
 
-            int lineCounter = 0;
-            String line;
+    /**
+     * Поток получения информации из файла.
+     * Инициализирует объект с необходимыми данными (согласно формату) и передаёт очереди для дальнейшей обработки
+     */
+    private class InputJSONParserThread implements Runnable {
 
-            while ((line = fileStream.readLine()) != null) {
-                lineCounter++;
+        private File path;
 
-                //{“orderId”:2,”amount”:1.23,”currency”:”USD”,”comment”:”оплата заказа”}
-                String[] splitLine = line.split(",");
+        private InputJSONParserThread (File path) {
+            this.path = path;
+        }
 
-                if (splitLine.length < 4) {
-                    formatFromTestTask.setErrorResult(lineCounter, fileName,
-                            "ERROR: недостаточно данных для парсинга");
+        @Override
+        public void run() {
+            try (BufferedReader fileStream = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(path)))) {
 
-                } else if (splitLine.length > 4) {
-                    formatFromTestTask.setErrorResult(lineCounter, fileName,
-                            "ERROR: находится больше данных чем необходимо");
 
-                } else {
+                InputFormatFromTestTask inputFormatFromTestTask;
+                ObjectMapper mapper = new ObjectMapper();
+                int lineCounter = 0;
+                String line;
+
+                while ((line = fileStream.readLine()) != null) {
+                    lineCounter++;
+
+                    OutputJSONFormatFromTestTask outputJSONFormatFromTestTask = new OutputJSONFormatFromTestTask();
+
                     try {
-                        formatFromTestTask.setId(Integer.parseInt(splitLine[0].split(":")[1]));
-                        formatFromTestTask.setAmount(Double.parseDouble(splitLine[1].split(":")[1]));
+                        inputFormatFromTestTask = mapper.readValue(line, InputFormatFromTestTask.class);
 
-                        String commentInQuotes  = splitLine[3].trim().split(":")[1];
-                        formatFromTestTask.setComment(commentInQuotes.substring(1, commentInQuotes.length() - 1));
-
-                        formatFromTestTask.setFileName(fileName);
-                        formatFromTestTask.setLine(lineCounter);
-                        formatFromTestTask.setResult("OK");
-
-                    }catch (NumberFormatException e) {
-                        formatFromTestTask.setErrorResult(lineCounter, fileName,
-                                "ERROR: не удалось привести значение к необходимому типу данных");
+                    } catch (JsonGenerationException | JsonMappingException e) {
+                        outputJSONFormatFromTestTask.createErrorFormat(fileName, lineCounter, "ERROR: " + e.getMessage());
+                        inputJSONFormatFilesQueue.add(outputJSONFormatFromTestTask);
+                        continue;
                     }
+
+                    outputJSONFormatFromTestTask.setAllParameters(
+                            inputFormatFromTestTask.getOrderId(),
+                            inputFormatFromTestTask.getAmount(),
+                            inputFormatFromTestTask.getComment(),
+                            fileName,
+                            lineCounter,
+                            "OK");
+
+                    inputJSONFormatFilesQueue.add(outputJSONFormatFromTestTask);
                 }
 
-                System.out.println(formatFromTestTask.getParseLine());
-            }
+                fileEnd = true;
+                outputJSONThread.interrupt();
 
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+            } catch (IOException e) {
+                if (outputJSONThread.isAlive()) {
+                    outputJSONThread.interrupt();
+                }
+            }
         }
     }
 
-    @Autowired
-    public void setFormatFromTestTask(FormatFromTestTask formatFromTestTask) {
-        this.formatFromTestTask = formatFromTestTask;
+    /**
+     * Поток получения информации из очереди с подготовленными для парсинга объектами.
+     * Парсит объект в JSON формат и выводит в консоль
+     */
+    private class OutputJSONParserThread implements Runnable {
+
+        @Override
+        public void run() {
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            try {
+                //До тех пор пока данные в файле для чтения не закончились
+                while (!fileEnd) {
+
+                    StringWriter stringWriter = new StringWriter();
+
+                    OutputJSONFormatFromTestTask outputJSONFormatFromTestTask =
+                            inputJSONFormatFilesQueue.take();
+
+                    mapper.writeValue(stringWriter, outputJSONFormatFromTestTask);
+
+                    System.out.println(stringWriter);
+                }
+
+                //Если файл закончился, но в очереди ещё остались объекты для парсинга (flush)
+                readAndGetParseObject(mapper);
+
+            } catch (InterruptedException e) {
+                readAndGetParseObject(mapper);
+            } catch (IOException ignore) { }
+        }
+
+        /**
+         * Дочитывает объекты из очереди и парсит их
+         * @param mapper
+         */
+        private void readAndGetParseObject(ObjectMapper mapper) {
+
+            OutputJSONFormatFromTestTask outputJSONFormatFromTestTask;
+
+            while ((outputJSONFormatFromTestTask = inputJSONFormatFilesQueue.poll()) != null) {
+
+                try {
+                    StringWriter stringWriter = new StringWriter();
+                    mapper.writeValue(stringWriter, outputJSONFormatFromTestTask);
+                    System.out.println(stringWriter);
+                } catch (IOException ignore) { }
+            }
+
+            //Говорю начать парсить следующий файл
+            parserInJSONFileManager.parseNextFile();
+        }
     }
 }

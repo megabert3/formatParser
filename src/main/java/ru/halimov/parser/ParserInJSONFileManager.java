@@ -6,7 +6,10 @@ import ru.halimov.parser.parsersFormat.FormatParserJSON;
 import ru.halimov.parser.parsersFormat.FormatParserSCV;
 
 import java.io.File;
+import java.sql.Struct;
 import java.util.Locale;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Данный класс является менеджером по парсингу файлов. В зависимости от расширения полученного на вход файла
@@ -15,30 +18,59 @@ import java.util.Locale;
 @Component
 public class ParserInJSONFileManager {
 
+    private final BlockingQueue<String> filesPathQueue = new LinkedBlockingQueue<>();
+
+    //Мьютекс говорящий о том, что очередь путей пуста и первый входной путь будет взят в обработку
+    private volatile boolean canParseImmediately  = true;
+
     private FormatParserJSON formatParserJSON;
+
     private FormatParserSCV formatParserSCV;
 
     public void parse(String pathToFile) {
-        File file = new File(pathToFile);
 
-        if (!file.isFile()) {
-            System.out.println("Указанный путь не является файлом: " + pathToFile);
-            return;
+        if (canParseImmediately) {
+
+            File file = new File(pathToFile);
+
+            if (!file.isFile()) {
+                System.out.println("Указанный путь не является файлом: " + pathToFile);
+                return;
+            }
+
+            String extension = getExtension(pathToFile).toLowerCase(Locale.ROOT);
+
+            switch (extension) {
+                case "csv":
+                    formatParserSCV.parse(file);
+                    canParseImmediately = false;
+                    break;
+
+                case "json":
+                    formatParserJSON.parse(file);
+                    canParseImmediately = false;
+                    break;
+
+                default:
+                    System.out.println("Формат файла не поддерживается");
+            }
+
+        } else {
+            filesPathQueue.add(pathToFile);
         }
+    }
 
-        String extension = getExtension(pathToFile).toLowerCase(Locale.ROOT);
+    /**
+     * Передаёт в управление новую ссылку для парсинга
+     */
+    public synchronized void parseNextFile() {
+        String path = filesPathQueue.poll();
+        if (path != null) {
+            canParseImmediately = true;
+            parse(path);
 
-        switch (extension) {
-            case "csv" :
-                formatParserSCV.parse(file);
-                break;
-
-            case "json" :
-                formatParserJSON.parse(file);
-                break;
-
-            default:
-                System.out.println("Формат файла не поддерживается");
+        } else {
+            canParseImmediately = true;
         }
     }
 

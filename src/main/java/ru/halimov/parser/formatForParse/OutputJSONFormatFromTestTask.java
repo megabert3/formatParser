@@ -1,44 +1,45 @@
 package ru.halimov.parser.formatForParse;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
  * Данный класс отвечает за конкретный формат записи, которую необходимо возвращать
  */
 @Component
-public class FormatFromTestTask implements ParsingFormat {
+@Scope("prototype")
+@JsonAutoDetect
+public class OutputJSONFormatFromTestTask {
 
     private int id;
     private double amount;
-    private String comment = "";
-    private String fileName = "";
+    private String comment;
+    private String fileName;
     private int line;
     private String result;
 
-    @Override
-    public String getParseLine() {
-        //{“id”:1, ”amount”:100, ”comment”:”оплата заказа”, ”filename”:”orders.csv”, ”line”:1, ”result”:”OK” }
-        return "{\"id:\":" + id + "," +
-                "\"amount\":" + amount + "," +
-                "\"comment\":" + "\"" + comment + "\"" + "," +
-                "\"filename\":" + "\"" + fileName + "\"" + "," +
-                "\"line\":" + line + "," +
-                "\"result\":" + "\"" + result + "\"";
+    public OutputJSONFormatFromTestTask() {}
+
+    @JsonIgnore
+    public void setAllParameters(int id, double amount, String comment, String fileName, int line, String result) {
+        this.id = id;
+        this.amount = amount;
+        this.comment = comment;
+        this.fileName = fileName;
+        this.line = line;
+        this.result = result;
     }
 
-    /**
-     * В случае возникновения ошибки парсинга
-     * @param line - номер линии
-     * @param fileName - название файла
-     * @param errorMess - сообщение об ошибке
-     */
-    public void setErrorResult(int line, String fileName, String errorMess) {
+    @JsonIgnore
+    public void createErrorFormat(String filename, int line, String error) {
         id = 0;
         amount = 0;
         comment = "";
-        this.fileName = fileName;
+        this.fileName = filename;
         this.line = line;
-        result = errorMess;
+        result = error;
     }
 
     public int getId() {

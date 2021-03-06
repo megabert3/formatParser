@@ -1,14 +1,11 @@
-{“orderId”:1,”amount”:1.24,”currency”:”EUR”,”comment”:”оплата заказа”}
-{“orderId”:2,”amount”:1.32,”currency”:”RUB”,”comment”:”оплата заказа”}
-{“orderId”:3,”amount”:2.432,”currency”:”EUR”,”comment”:”оплата заказа”}
-{“orderId”:4,”amount”:88.14,”currency”:”USD”,”comment”:”оплата заказа”}
-{“orderId”:5,”amount”:13.29,”currency”:”GBP”,”comment”:”оплата заказа”}
-{“orderId”:6,”amount”:69.69,”currency”:”EUR”,”comment”:”оплата заказа”}
-{“orderId”:7,”amount”:11.13,”currency”:”USD”,”comment”:”оплата заказа”}
-{“orderId”:8,”amount”:5.7,”currency”:”ABV”,”comment”:”оплата заказа”}
-{“orderId”:9,”amount”:2.4,”currency”:”IKL”,”comment”:”оплата заказа”}
-{“orderId”:10,”amount”:2.76,”currency”:”MNO”,”comment”:”оплата заказа”}
-{“orderId”:11,”amount”:9.46,”currency”:”EUR”,”comment”:”оплата заказа”}
-{“orderId”:10,”amount”:2.76,”currency”:”MNO”,”comment”:”оплата заказа”,”comment”:”много параметров”}
-{“orderId”:11,”amount”:9.46,”comment”:”мало параметров”}
-{“orderId”:”11”,”amount”:9.46,”currency”:”EUR”,”comment”:”оплата заказа”}
+{"orderId":1,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":2,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":3,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":4,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":5,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":6,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":7,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":8,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":9,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":10,"amount":124,"currency":"EUR","comment":"оплата заказа"}
+{"orderId":10,"amount":124,"currency":"EUR","ошибка":"ошибка"}

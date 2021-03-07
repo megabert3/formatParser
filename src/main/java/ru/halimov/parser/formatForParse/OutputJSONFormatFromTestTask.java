@@ -2,14 +2,12 @@ package ru.halimov.parser.formatForParse;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
  * Данный класс отвечает за конкретный формат записи, которую необходимо возвращать
  */
 @Component
-@Scope("prototype")
 @JsonAutoDetect
 public class OutputJSONFormatFromTestTask {
 
@@ -20,10 +18,7 @@ public class OutputJSONFormatFromTestTask {
     private int line;
     private String result;
 
-    public OutputJSONFormatFromTestTask() {}
-
-    @JsonIgnore
-    public void setAllParameters(int id, double amount, String comment, String fileName, int line, String result) {
+    public OutputJSONFormatFromTestTask(int id, double amount, String comment, String fileName, int line, String result) {
         this.id = id;
         this.amount = amount;
         this.comment = comment;
@@ -32,14 +27,17 @@ public class OutputJSONFormatFromTestTask {
         this.result = result;
     }
 
+    public OutputJSONFormatFromTestTask() {}
+
     @JsonIgnore
-    public void createErrorFormat(String filename, int line, String error) {
+    public OutputJSONFormatFromTestTask createErrorFormat(String filename, int line, String error) {
         id = 0;
         amount = 0;
         comment = "";
         this.fileName = filename;
         this.line = line;
         result = error;
+        return this;
     }
 
     public int getId() {

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
  * Данный класс отвечает за конкретный формат приходящих данных из файла
  */
 @Component
-@Scope("prototype")
 @JsonAutoDetect
 public class InputFormatFromTestTask {
 

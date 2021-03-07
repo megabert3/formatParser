@@ -3,10 +3,9 @@ package ru.halimov.parser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.halimov.parser.parsersFormat.FormatParserJSON;
-import ru.halimov.parser.parsersFormat.FormatParserSCV;
+import ru.halimov.parser.parsersFormat.FormatParserCSV;
 
 import java.io.File;
-import java.sql.Struct;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -21,11 +20,11 @@ public class ParserInJSONFileManager {
     private final BlockingQueue<String> filesPathQueue = new LinkedBlockingQueue<>();
 
     //Мьютекс говорящий о том, что очередь путей пуста и первый входной путь будет взят в обработку
-    private volatile boolean canParseImmediately  = true;
+    private boolean canParseImmediately  = true;
 
     private FormatParserJSON formatParserJSON;
 
-    private FormatParserSCV formatParserSCV;
+    private FormatParserCSV formatParserCSV;
 
     public void parse(String pathToFile) {
 
@@ -42,7 +41,7 @@ public class ParserInJSONFileManager {
 
             switch (extension) {
                 case "csv":
-                    formatParserSCV.parse(file);
+                    formatParserCSV.parse(file);
                     canParseImmediately = false;
                     break;
 
@@ -65,12 +64,10 @@ public class ParserInJSONFileManager {
      */
     public synchronized void parseNextFile() {
         String path = filesPathQueue.poll();
-        if (path != null) {
-            canParseImmediately = true;
-            parse(path);
+        canParseImmediately = true;
 
-        } else {
-            canParseImmediately = true;
+        if (path != null) {
+            parse(path);
         }
     }
 
@@ -91,7 +88,7 @@ public class ParserInJSONFileManager {
     }
 
     @Autowired
-    public void setFormatParserSCV(FormatParserSCV formatParserSCV) {
-        this.formatParserSCV = formatParserSCV;
+    public void setFormatParserSCV(FormatParserCSV formatParserCSV) {
+        this.formatParserCSV = formatParserCSV;
     }
 }

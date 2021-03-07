@@ -20,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Данный класс отвечает за парсинг данных из файлов с расширением SCV
  */
 @Component
-public class FormatParserSCV implements FormatParser {
+public class FormatParserCSV implements FormatParser {
 
     private ParserInJSONFileManager parserInJSONFileManager;
 
@@ -35,7 +35,7 @@ public class FormatParserSCV implements FormatParser {
             = new LinkedBlockingQueue<>();
 
     @Autowired
-    public FormatParserSCV(ParserInJSONFileManager parserInJSONFileManager) {
+    public FormatParserCSV(ParserInJSONFileManager parserInJSONFileManager) {
         this.parserInJSONFileManager = parserInJSONFileManager;
     }
 
@@ -85,15 +85,15 @@ public class FormatParserSCV implements FormatParser {
 
                     try {
                         inputFormatFromTestTask = orderLines.next();
-                        outputJSONFormatFromTestTask = new OutputJSONFormatFromTestTask();
 
-                        outputJSONFormatFromTestTask.setAllParameters(
+                        outputJSONFormatFromTestTask = new OutputJSONFormatFromTestTask(
                                 inputFormatFromTestTask.getOrderId(),
                                 inputFormatFromTestTask.getAmount(),
                                 inputFormatFromTestTask.getComment(),
                                 fileName,
                                 lineCounter,
-                                "OK");
+                                "OK"
+                        );
 
                     }catch (RuntimeJsonMappingException e) {
                         outputJSONFormatFromTestTask = new OutputJSONFormatFromTestTask();

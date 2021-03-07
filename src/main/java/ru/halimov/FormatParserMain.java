@@ -13,15 +13,15 @@ public class FormatParserMain {
         ParserInJSONFileManager parserInJSONFileManager =
                 annotationConfigApplicationContext.getBean(ParserInJSONFileManager.class);
 
-        for (String pathToFile : args) {
+        /*for (String pathToFile : args) {
             parserInJSONFileManager.parse(pathToFile);
-        }
+        }*/
 
-        /*String csv = "C:\\Users\\bert1\\Desktop\\test\\csvFile.csv";
+        String csv = "C:\\Users\\bert1\\Desktop\\test\\csvFile.csv";
         String json = "C:\\Users\\bert1\\Desktop\\test\\jsonFile.json";
 
         parserInJSONFileManager.parse(csv);
-        parserInJSONFileManager.parse(json);*/
+        parserInJSONFileManager.parse(json);
 
         annotationConfigApplicationContext.close();
     }

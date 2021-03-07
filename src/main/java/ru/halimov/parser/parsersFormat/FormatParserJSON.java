@@ -87,13 +87,14 @@ public class FormatParserJSON implements FormatParser {
                         continue;
                     }
 
-                    outputJSONFormatFromTestTask.setAllParameters(
+                    outputJSONFormatFromTestTask = new OutputJSONFormatFromTestTask(
                             inputFormatFromTestTask.getOrderId(),
                             inputFormatFromTestTask.getAmount(),
                             inputFormatFromTestTask.getComment(),
                             fileName,
                             lineCounter,
-                            "OK");
+                            "OK"
+                    );
 
                     inputJSONFormatFilesQueue.add(outputJSONFormatFromTestTask);
                 }

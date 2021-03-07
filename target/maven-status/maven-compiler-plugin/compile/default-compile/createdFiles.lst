@@ -1,0 +1,8 @@
+ru\halimov\parser\ParserInJSONFileManager.class
+ru\halimov\parser\parsersFormat\FormatParserSCV.class
+ru\halimov\parser\parsersFormat\FormatParser.class
+ru\halimov\parser\formatForParse\FormatFromTestTask.class
+ru\halimov\springConfig\FormatParserAppConfig.class
+ru\halimov\parser\parsersFormat\FormatParserJSON.class
+ru\halimov\FormatParserMain.class
+ru\halimov\parser\formatForParse\ParsingFormat.class

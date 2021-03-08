@@ -1,8 +1,8 @@
-C:\Users\bert1\IdeaProjects\formatParser\src\main\java\ru\halimov\springConfig\FormatParserAppConfig.java
-C:\Users\bert1\IdeaProjects\formatParser\src\main\java\ru\halimov\parser\formatForParse\ParsingFormat.java
-C:\Users\bert1\IdeaProjects\formatParser\src\main\java\ru\halimov\parser\ParserInJSONFileManager.java
-C:\Users\bert1\IdeaProjects\formatParser\src\main\java\ru\halimov\parser\parsersFormat\FormatParserSCV.java
-C:\Users\bert1\IdeaProjects\formatParser\src\main\java\ru\halimov\FormatParserMain.java
-C:\Users\bert1\IdeaProjects\formatParser\src\main\java\ru\halimov\parser\formatForParse\FormatFromTestTask.java
-C:\Users\bert1\IdeaProjects\formatParser\src\main\java\ru\halimov\parser\parsersFormat\FormatParserJSON.java
-C:\Users\bert1\IdeaProjects\formatParser\src\main\java\ru\halimov\parser\parsersFormat\FormatParser.java
+C:\Users\bert1\IdeaProjects\FormatParserJSON\src\main\java\ru\halimov\parser\formatForParse\OutputJSONFormatFromTestTask.java
+C:\Users\bert1\IdeaProjects\FormatParserJSON\src\main\java\ru\halimov\FormatParserMain.java
+C:\Users\bert1\IdeaProjects\FormatParserJSON\src\main\java\ru\halimov\parser\parsersFormat\FormatParser.java
+C:\Users\bert1\IdeaProjects\FormatParserJSON\src\main\java\ru\halimov\parser\parsersFormat\FormatParserJSON.java
+C:\Users\bert1\IdeaProjects\FormatParserJSON\src\main\java\ru\halimov\springConfig\FormatParserAppConfig.java
+C:\Users\bert1\IdeaProjects\FormatParserJSON\src\main\java\ru\halimov\parser\formatForParse\InputFormatFromTestTask.java
+C:\Users\bert1\IdeaProjects\FormatParserJSON\src\main\java\ru\halimov\parser\ParserInJSONFileManager.java
+C:\Users\bert1\IdeaProjects\FormatParserJSON\src\main\java\ru\halimov\parser\parsersFormat\FormatParserCSV.java

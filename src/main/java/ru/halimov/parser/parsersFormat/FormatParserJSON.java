@@ -10,6 +10,7 @@ import ru.halimov.parser.formatForParse.InputFormatFromTestTask;
 import ru.halimov.parser.formatForParse.OutputJSONFormatFromTestTask;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -65,7 +66,7 @@ public class FormatParserJSON implements FormatParser {
         public void run() {
             try (BufferedReader fileStream = new BufferedReader(
                     new InputStreamReader(
-                            new FileInputStream(path)))) {
+                            new FileInputStream(path), Charset.forName("UTF-8")))) {
 
 
                 InputFormatFromTestTask inputFormatFromTestTask;
